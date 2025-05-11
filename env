@@ -1,4 +1,3 @@
-# .env
-MEXC_API_KEY=mx0vglaEUP5G1ZBusm
 PORT=3000
-NODE_ENV=production
+MEXC_API_KEY=bMbK7scgZeXenGxfqVqwnLMZAgTYfLyJraeZjKA23EgvGh4cK9YanzRPaOMjugIM
+ALLOWED_ORIGINS=https://server-front-git-main-talshlomitalgmailcoms-projects.vercel.app/

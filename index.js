@@ -1,43 +1,44 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const axios = require('axios');
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-// Domain configuration
-const INTERNAL_DOMAIN = 'agile-delight.railway.internal';
-const PUBLIC_DOMAIN = process.env.RAILWAY_PUBLIC_DOMAIN || 'your-project-name.up.railway.app';
-const PORT = process.env.PORT || 3000;
+// Enhanced CORS configuration
+app.use(cors({
+  origin: [
+    'agile-delight-production.up.railway.app', // Your frontend URL
+    'http://localhost:3000'               // For local testing
+  ],
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+  credentials: true
+}));
+
+app.use(express.json());
 
 // Health check endpoint
 app.get('/', (req, res) => {
-  res.json({
-    status: 'running',
-    domain: req.hostname,
-    publicDomain: PUBLIC_DOMAIN,
-    internalDomain: INTERNAL_DOMAIN,
-    routes: ['/api/signal', '/api/train']
-  });
+  res.json({ status: 'running', version: '1.0.0' });
 });
 
 // Signal endpoint
 app.post('/api/signal', async (req, res) => {
   try {
     const { pair } = req.body;
-    const candles = await getMexcCandles(pair);
-    const signal = detectSignal(candles);
-    res.json(signal);
+    // Simulated response - replace with real logic
+    res.json({ 
+      signal: "STRONG_BUY", 
+      confidence: 85,
+      timestamp: new Date().toISOString()
+    });
   } catch (error) {
-    console.error('Signal error:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Internal URL: http://${INTERNAL_DOMAIN}:${PORT}`);
-  console.log(`Public URL: https://${PUBLIC_DOMAIN}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
