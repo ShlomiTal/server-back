@@ -1,44 +1,36 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 
-dotenv.config();
 const app = express();
 
-// Enhanced CORS configuration
-app.use(cors({
-  origin: [
-    'agile-delight-production.up.railway.app', // Your frontend URL
-    'http://localhost:3000'               // For local testing
-  ],
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type'],
-  credentials: true
-}));
+// 1. Enable CORS for all routes
+app.use(cors());
 
-app.use(express.json());
-
-// Health check endpoint
+// 2. Add root route for testing
 app.get('/', (req, res) => {
-  res.json({ status: 'running', version: '1.0.0' });
+  res.send('Backend is running!');
 });
 
-// Signal endpoint
-app.post('/api/signal', async (req, res) => {
-  try {
-    const { pair } = req.body;
-    // Simulated response - replace with real logic
-    res.json({ 
-      signal: "STRONG_BUY", 
-      confidence: 85,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+// 3. Simplified Signal Endpoint
+app.post('/api/signal', express.json(), (req, res) => {
+  console.log('Received request with:', req.body);
+  
+  // Immediate test response
+  res.json({
+    status: 'success',
+    signal: 'BUY',
+    confidence: 75,
+    pair: req.body.pair || 'none'
+  });
+});
+
+// 4. Error handling
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Server error!');
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
